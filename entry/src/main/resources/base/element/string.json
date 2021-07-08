@@ -13,10 +13,6 @@
       "value": "Hello World"
     },
     {
-      "name": "Camera",
-      "value": "CAMERA"
-    },
-    {
       "name": "Microphone",
       "value": "MICROPHONE"
     },
