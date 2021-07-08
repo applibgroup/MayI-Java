@@ -134,7 +134,7 @@ Below is a flow chart that visualizes the library's flow described above.
 
 ​
 ## Future work
-In our version, the flow directly goes to the onRationale() for the first time, while it should ask the user permission through a system dialog prompt. This is due to the absence of an architecture where we can assert if we need to show a rationale before askign for an user permisssion. Once we have this platform supportt, we can add the feature of asking permission for the first time without showing rationale.
+In our version, the flow directly goes to the onRationale() for the first time, while it should ask the user permission through a system dialog prompt. This is due to the absence of platform support that we can find if we need to show a rationale before asking for an user permisssion. Once we have this platform support, we can add the feature of asking permission for the first time without showing rationale.
 
 ## License
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.html)
