@@ -1,56 +1,65 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+apply plugin: 'com.huawei.ohos.app'
+apply plugin: 'org.sonarqube'
+apply plugin: 'checkstyle'
 
+ohos {
+    compileSdkVersion 5
+    defaultConfig {
+        compatibleSdkVersion 5
+    }
+}
+	
 buildscript {
     repositories {
-        jcenter()
-        google()
+        maven {
+            url 'https://repo.huaweicloud.com/repository/maven/'
+        }
+        maven {
+            url 'https://developer.huawei.com/repo/'
+        }
+		jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
+        classpath 'com.huawei.ohos:hap:2.4.2.7'
+        classpath 'com.huawei.ohos:decctest:1.0.0.7'
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.3"
     }
 }
 
 allprojects {
     repositories {
-        jcenter()
-        google()
+        maven {
+            url 'https://repo.huaweicloud.com/repository/maven/'
+        }
+        maven {
+            url 'https://developer.huawei.com/repo/'
+        }
+		jcenter()
+    }
+    task checkstyle(type: Checkstyle) {
+        showViolations = true
+        configFile file("huawei/config/checkstyle.xml")
+
+        source 'entry/src/main/java'
+        source 'mayi/src/main/java'
+        include '**/*.java'
+
+        // empty classpath
+        classpath = files()
     }
 }
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+checkstyle {
+    toolVersion "8.43"
 }
-
-ext {
-    compileSdkVersion = 28
-    buildToolsVersion = '28.0.3'
-    minSdkVersion = 15
-    targetSdkVersion = 28
-    publishVersionName = '1.5'
-    publishVersionCode = 6
-
-    currentVersionDesc = 'MayI current version'
-    bintrayRepo = 'maven'
-    bintrayName = 'mayi'   // Has to be same as your library module name
-
-    publishedGroupId = 'com.thanosfisherman.mayi'
-    libraryName = 'MayI'
-    artifact = 'mayi'     // Has to be same as your library module name
-
-    libraryDescription = 'Yet another runtime permission library for Android'
-
-    // Your github repo link
-    siteUrl = 'https://github.com/ThanosFisherman/MayI'
-    gitUrl = 'https://github.com/ThanosFisherman/MayI.git'
-    githubRepository= 'ThanosFisherman/MayI'
-
-    developerId = 'thanosfisherman'
-    developerName = 'Thanos Psaridis'
-    developerEmail = 'psaridis@gmail.com'
-
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    allLicenses = ["Apache-2.0"]
+sonarqube {
+    properties {
+        property "sonar.projectKey", "applibgroup_MayI-Java"
+        property "sonar.organization", "applibgroup"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.sources", "entry,mayi"
+        property "sonar.java.binaries", "entry/build,mayi/build"
+        property "sonar.java.checkstyle.reportPaths", "build/reports/checkstyle/checkstyle.xml"
+    }
 }

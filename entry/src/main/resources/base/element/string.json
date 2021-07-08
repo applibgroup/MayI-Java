@@ -1,0 +1,36 @@
+{
+  "string": [
+    {
+      "name": "app_name",
+      "value": "MayI"
+    },
+    {
+      "name": "mainability_description",
+      "value": "Java_Phone_Empty Feature Ability"
+    },
+    {
+      "name": "mainability_HelloWorld",
+      "value": "Hello World"
+    },
+    {
+      "name": "Camera",
+      "value": "CAMERA"
+    },
+    {
+      "name": "Microphone",
+      "value": "MICROPHONE"
+    },
+    {
+      "name": "Location",
+      "value": "LOCATION"
+    },
+    {
+      "name": "Requestall",
+      "value": "REQUEST ALL"
+    },
+    {
+      "name": "toastui",
+      "value": "This is a toast dialog"
+    }
+  ]
+}

@@ -1,66 +1,67 @@
 package com.thanosfisherman.mayi;
 
-import android.app.Activity;
-import android.app.FragmentManager;
-import android.os.Build;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-
+import ohos.aafwk.ability.AbilitySlice;
+import ohos.aafwk.content.Intent;
+import ohos.bundle.IBundleManager;
 import com.thanosfisherman.mayi.listeners.IPermissionBuilder;
 import com.thanosfisherman.mayi.listeners.MayiErrorListener;
 import com.thanosfisherman.mayi.listeners.multi.PermissionResultMultiListener;
 import com.thanosfisherman.mayi.listeners.multi.RationaleMultiListener;
 import com.thanosfisherman.mayi.listeners.single.PermissionResultSingleListener;
 import com.thanosfisherman.mayi.listeners.single.RationaleSingleListener;
-
+import org.jetbrains.annotations.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Class to build the permission and initiating the request for permissions.
+ */
 public class Mayi implements IPermissionBuilder,
-                             IPermissionBuilder.Permission,
-                             IPermissionBuilder.SinglePermissionBuilder,
-                             IPermissionBuilder.MultiPermissionBuilder
-{
+        IPermissionBuilder.Permission,
+        IPermissionBuilder.SinglePermissionBuilder,
+        IPermissionBuilder.MultiPermissionBuilder {
+    private final WeakReference<AbilitySlice> mActivity;
     private String[] mPermissions;
-    @Nullable private PermissionResultSingleListener mPermissionResultListener;
-    @Nullable private RationaleSingleListener mRationaleSingleListener;
-    @Nullable private PermissionResultMultiListener mPermissionsResultMultiListener;
-    @Nullable private RationaleMultiListener mRationaleMultiListener;
+    @Nullable
+    private PermissionResultSingleListener mPermissionResultListener;
+    @Nullable
+    private RationaleSingleListener mRationaleSingleListener;
+    @Nullable
+    private PermissionResultMultiListener mPermissionsResultMultiListener;
+    @Nullable
+    private RationaleMultiListener mRationaleMultiListener;
     private MayiErrorListener mErrorListener;
-    private final WeakReference<Activity> mActivity;
-    private boolean isRationaleCalled = false, isResultCalled = false;
+    private List<String> mDeniedPermissions;
+    private List<String> mGrantedPermissions;
+    private final List<String> mRationalePermissions = new LinkedList<>();
+    private boolean isRationaleCalled = false;
+    private boolean isResultCalled = false;
 
-    private Mayi(Activity activity)
-    {
+    private Mayi(AbilitySlice activity) {
         this.mActivity = new WeakReference<>(activity);
     }
 
-    public static IPermissionBuilder.Permission withActivity(Activity activity)
-    {
+    public static IPermissionBuilder.Permission withActivity(AbilitySlice activity) {
         return new Mayi(activity);
     }
 
     @Override
-    public SinglePermissionBuilder withPermission(@NonNull String permission)
-    {
+    public SinglePermissionBuilder withPermission(String permission) {
         mPermissions = new String[]{permission};
         return this;
     }
 
     @Override
-    public MultiPermissionBuilder withPermissions(@NonNull String... permissions)
-    {
+    public MultiPermissionBuilder withPermissions(String... permissions) {
         mPermissions = permissions;
         return this;
     }
 
     @Override
-    public SinglePermissionBuilder onResult(PermissionResultSingleListener response)
-    {
-        if (!isResultCalled)
-        {
+    public SinglePermissionBuilder onResult(PermissionResultSingleListener response) {
+        if (!isResultCalled) {
             mPermissionResultListener = response;
             isResultCalled = true;
         }
@@ -68,21 +69,8 @@ public class Mayi implements IPermissionBuilder,
     }
 
     @Override
-    public SinglePermissionBuilder onRationale(RationaleSingleListener rationale)
-    {
-        if (!isRationaleCalled)
-        {
-            mRationaleSingleListener = rationale;
-            isRationaleCalled = true;
-        }
-        return this;
-    }
-
-    @Override
-    public MultiPermissionBuilder onResult(PermissionResultMultiListener response)
-    {
-        if (!isResultCalled)
-        {
+    public MultiPermissionBuilder onResult(PermissionResultMultiListener response) {
+        if (!isResultCalled) {
             mPermissionsResultMultiListener = response;
             isResultCalled = true;
         }
@@ -90,10 +78,17 @@ public class Mayi implements IPermissionBuilder,
     }
 
     @Override
-    public MultiPermissionBuilder onRationale(RationaleMultiListener rationale)
-    {
-        if (!isRationaleCalled)
-        {
+    public SinglePermissionBuilder onRationale(RationaleSingleListener rationale) {
+        if (!isRationaleCalled) {
+            mRationaleSingleListener = rationale;
+            isRationaleCalled = true;
+        }
+        return this;
+    }
+
+    @Override
+    public MultiPermissionBuilder onRationale(RationaleMultiListener rationale) {
+        if (!isRationaleCalled) {
             mRationaleMultiListener = rationale;
             isRationaleCalled = true;
         }
@@ -101,76 +96,119 @@ public class Mayi implements IPermissionBuilder,
     }
 
     @Override
-    public IPermissionBuilder onErrorListener(MayiErrorListener errorListener)
-    {
+    public IPermissionBuilder onErrorListener(MayiErrorListener errorListener) {
         mErrorListener = errorListener;
         return this;
     }
 
     @Override
-    public void check()
-    {
-        try
-        {
-            if (mPermissions == null || mPermissions.length == 0)
-                throw new IllegalArgumentException("You must specify at least one valid permission to check");
-            if (Arrays.asList(mPermissions).contains(null))
-                throw new IllegalArgumentException("Permssions arguments must NOT contain null values");
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
+    public void check() {
+        try {
+            if (mPermissions == null || mPermissions.length == 0) {
+                throw new NullPointerException("You must specify at least one valid permission to check");
+            }
+            if (Arrays.asList(mPermissions).contains(null)) {
+                throw new NullPointerException("Permissions arguments must NOT contain null values");
+            }
+            final PermissionMatcher matcher = new PermissionMatcher(mPermissions, mActivity);
+            if (matcher.areAllPermissionsGranted()) {
                 grandEverything();
-            else
-            {
-                final PermissionMatcher matcher = new PermissionMatcher(mPermissions, mActivity);
-                if (matcher.areAllPermissionsGranted())
-                    grandEverything();
-                else
-                    initializeFragmentAndCheck(mPermissions, matcher.getDeniedPermissions(), matcher.getGrantedPermissions());
+            } else {
+                mDeniedPermissions = matcher.getDeniedPermissions();
+                mGrantedPermissions = matcher.getGrantedPermissions();
+                checkPermissionsUtil();
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-            if (mErrorListener != null)
+            if (mErrorListener != null) {
                 mErrorListener.onError(e);
-        }
-    }
-
-    private void grandEverything()
-    {
-        final PermissionBean[] beans = new PermissionBean[mPermissions.length];
-
-        for (int i = 0; i < mPermissions.length; i++)
-        {
-            beans[i] = new PermissionBean(mPermissions[i]);
-            beans[i].setGranted(true);
-            beans[i].setPermanentlyDenied(false);
-        }
-        if (mPermissionResultListener != null)
-            mPermissionResultListener.permissionResult(beans[0]);
-        else if (mPermissionsResultMultiListener != null)
-            mPermissionsResultMultiListener.permissionResults(beans);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private void initializeFragmentAndCheck(@NonNull String[] allPermissions, @NonNull List<String> deniedPermissions, @NonNull List<String> grantedPermissions)
-    {
-        MayiFragment frag = (MayiFragment) mActivity.get().getFragmentManager().findFragmentByTag(MayiFragment.TAG);
-        if (frag == null)
-        {
-            final FragmentManager fragmentManager = mActivity.get().getFragmentManager();
-            frag = new MayiFragment();
-            frag.setRetainInstance(true);
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
-            {
-                fragmentManager.beginTransaction().add(frag, MayiFragment.TAG).commit();
-                fragmentManager.executePendingTransactions();
             }
-            else
-                fragmentManager.beginTransaction().add(frag, MayiFragment.TAG).commitNow();
-
         }
-        frag.setListeners(mPermissionResultListener, mPermissionsResultMultiListener, mRationaleSingleListener, mRationaleMultiListener);
-        frag.checkPermissions(allPermissions, deniedPermissions, grantedPermissions);
+    }
+
+
+    /**
+     * Method to check the denied permission and call the rationale if the permission can be requested.
+     */
+    public void checkPermissionsUtil() {
+        mRationalePermissions.clear();
+        final List<PermissionBean> rationaleBeanList = new LinkedList<>();
+        for (String deniedPermission : mDeniedPermissions) {
+            if (mActivity.get().canRequestPermission(deniedPermission)) {
+                final PermissionBean beanRationale = new PermissionBean(deniedPermission);
+                beanRationale.setGranted(false);
+                beanRationale.setPermanentlyDenied(false);
+                rationaleBeanList.add(beanRationale);
+                mRationalePermissions.add(deniedPermission);
+            }
+        }
+        if (mRationaleSingleListener != null) {
+            mRationaleSingleListener.onRationale(rationaleBeanList.get(0), new PermissionRationaleToken(this));
+        } else if (mRationaleMultiListener != null) {
+            mRationaleMultiListener.onRationale(rationaleBeanList.toArray(new
+                    PermissionBean[rationaleBeanList.size()]), new PermissionRationaleToken(this));
+        }
+    }
+
+    private void grandEverything() {
+        final PermissionBean[] beans = new PermissionBean[mPermissions.length];
+        for (int i = 0; i < mPermissions.length; i++) {
+            if (mActivity.get().verifySelfPermission(mPermissions[i]) == IBundleManager.PERMISSION_GRANTED) {
+                beans[i] = new PermissionBean(mPermissions[i]);
+                beans[i].setGranted(true);
+                beans[i].setPermanentlyDenied(false);
+            } else {
+                beans[i] = new PermissionBean(mPermissions[i]);
+                beans[i].setGranted(false);
+                beans[i].setPermanentlyDenied(true);
+            }
+        }
+        if (mPermissionResultListener != null) {
+            mPermissionResultListener.permissionResult(beans[0]);
+        } else if (mPermissionsResultMultiListener != null) {
+            mPermissionsResultMultiListener.permissionResults(beans);
+        }
+    }
+
+    public void onContinuePermissionRequest() {
+        initializeFragmentAndCheck(mDeniedPermissions, mGrantedPermissions);
+    }
+
+    /**
+     * Shows the results as the permission requests have been skipped.
+     */
+    public void onSkipPermissionRequest() {
+        if (mPermissionResultListener != null) {
+            final PermissionBean beanRationale = new PermissionBean(mRationalePermissions.get(0));
+            beanRationale.setGranted(false);
+            beanRationale.setPermanentlyDenied(false);
+            mPermissionResultListener.permissionResult(beanRationale);
+        } else if (mPermissionsResultMultiListener != null) {
+            final List<PermissionBean> totalBeanList = new LinkedList<>();
+            for (String perm : mPermissions) {
+                final PermissionBean bean = new PermissionBean(perm);
+                if (mActivity.get().verifySelfPermission(perm) == IBundleManager.PERMISSION_GRANTED) {
+                    bean.setGranted(true);
+                    bean.setPermanentlyDenied(false);
+                } else if (mRationalePermissions.contains(perm)) {
+                    bean.setGranted(false);
+                    bean.setPermanentlyDenied(false);
+                } else {
+                    bean.setGranted(false);
+                    bean.setPermanentlyDenied(true);
+                }
+                totalBeanList.add(bean);
+            }
+            mPermissionsResultMultiListener.permissionResults(totalBeanList.toArray(new
+                    PermissionBean[totalBeanList.size()]));
+        }
+    }
+
+    private void initializeFragmentAndCheck(List<String> deniedPermissions, List<String> grantedPermissions) {
+        PermissionManager permissionManager = PermissionManager.getInstance();
+        permissionManager.setListeners(mPermissionResultListener, mPermissionsResultMultiListener);
+        permissionManager.checkPermissions(deniedPermissions, grantedPermissions);
+        MayiSlice mayislice = new MayiSlice();
+        mActivity.get().present(mayislice, new Intent());
     }
 }

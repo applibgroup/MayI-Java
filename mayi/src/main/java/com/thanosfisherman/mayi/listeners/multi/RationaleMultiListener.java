@@ -1,12 +1,12 @@
 package com.thanosfisherman.mayi.listeners.multi;
 
-import androidx.annotation.NonNull;
-
 import com.thanosfisherman.mayi.PermissionBean;
 import com.thanosfisherman.mayi.PermissionToken;
 
+/**
+ * Interface used to define onRationale method for MultiPermission Listener.
+ */
 @FunctionalInterface
-public interface RationaleMultiListener
-{
-    void onRationale(@NonNull PermissionBean[] permissions, @NonNull PermissionToken token);
+public interface RationaleMultiListener {
+    void onRationale(PermissionBean[] permissions, PermissionToken token);
 }
