@@ -1,11 +1,11 @@
 package com.thanosfisherman.mayi.listeners.single;
 
-import androidx.annotation.NonNull;
-
 import com.thanosfisherman.mayi.PermissionBean;
 
+/**
+ * Interface used to define permissionResult method for SinglePermission Listener.
+ */
 @FunctionalInterface
-public interface PermissionResultSingleListener
-{
-    void permissionResult(@NonNull PermissionBean permission);
+public interface PermissionResultSingleListener {
+    void permissionResult(PermissionBean permission);
 }

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DependentLayout
+    xmlns:ohos="http://schemas.huawei.com/res/ohos"
+    ohos:height="match_parent"
+    ohos:width="match_parent"
+    ohos:orientation="vertical"
+    >
+
+    <Button
+        ohos:id="$+id:microphone_permission_button"
+        ohos:height="50vp"
+        ohos:width="100vp"
+        ohos:text="$string:Microphone"
+        ohos:top_margin="34vp"
+        ohos:align_parent_top="true"
+        ohos:background_element="$graphic:button_background"
+        ohos:align_left="$id:location_permission_button"
+        ohos:align_start="$id:location_permission_button"
+        />
+
+    <Button
+        ohos:id="$+id:location_permission_button"
+        ohos:height="50vp"
+        ohos:width="100vp"
+        ohos:text="$string:Location"
+        ohos:below="$id:microphone_permission_button"
+        ohos:top_margin="27vp"
+        ohos:background_element="$graphic:button_background"
+        ohos:align_left="$id:all_permissions_button"
+        ohos:align_start="$id:all_permissions_button"
+        />
+
+    <Button
+        ohos:id="$+id:all_permissions_button"
+        ohos:height="50vp"
+        ohos:width="100vp"
+        ohos:text="$string:Requestall"
+        ohos:top_margin="27vp"
+        ohos:background_element="$graphic:button_background"
+        ohos:below="$id:location_permission_button"
+        ohos:horizontal_center="true"
+        />
+
+</DependentLayout>
