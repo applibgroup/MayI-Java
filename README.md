@@ -1,6 +1,5 @@
-<img src="Logotype primary.png" width="40%" height="40%" />
-
 # MayI
+<img src="Logotype primary.png" width="40%" height="40%" />
 MayI is yet another library that simplifies the process of requesting permissions at runtime for Harmony devices.
 
 ## Screenshot
