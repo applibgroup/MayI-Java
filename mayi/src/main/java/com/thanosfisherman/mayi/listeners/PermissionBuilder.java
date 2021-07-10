@@ -8,8 +8,8 @@ import com.thanosfisherman.mayi.listeners.single.RationaleSingleListener;
 /**
  * Interface to define all the methods related to a Permission.
  */
-public interface IPermissionBuilder {
-    IPermissionBuilder onErrorListener(MayiErrorListener errorListener);
+public interface PermissionBuilder {
+    PermissionBuilder onErrorListener(MayiErrorListener errorListener);
 
     void check();
 
@@ -20,13 +20,13 @@ public interface IPermissionBuilder {
 
         SinglePermissionBuilder withPermission(String permission);
 
-        IPermissionBuilder.MultiPermissionBuilder withPermissions(String... permissions);
+        PermissionBuilder.MultiPermissionBuilder withPermissions(String... permissions);
     }
 
     /**
      * Interface to define onResult and onRationale methods for SinglePermission.
      */
-    interface SinglePermissionBuilder extends IPermissionBuilder {
+    interface SinglePermissionBuilder extends PermissionBuilder {
 
         SinglePermissionBuilder onResult(PermissionResultSingleListener response);
 
@@ -36,7 +36,7 @@ public interface IPermissionBuilder {
     /**
      * Interface to define onResult and onRationale methods for MultiPermissions.
      */
-    interface MultiPermissionBuilder extends IPermissionBuilder {
+    interface MultiPermissionBuilder extends PermissionBuilder {
 
         MultiPermissionBuilder onResult(PermissionResultMultiListener response);
 

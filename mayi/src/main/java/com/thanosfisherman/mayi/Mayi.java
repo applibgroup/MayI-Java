@@ -3,8 +3,8 @@ package com.thanosfisherman.mayi;
 import ohos.aafwk.ability.AbilitySlice;
 import ohos.aafwk.content.Intent;
 import ohos.bundle.IBundleManager;
-import com.thanosfisherman.mayi.listeners.IPermissionBuilder;
 import com.thanosfisherman.mayi.listeners.MayiErrorListener;
+import com.thanosfisherman.mayi.listeners.PermissionBuilder;
 import com.thanosfisherman.mayi.listeners.multi.PermissionResultMultiListener;
 import com.thanosfisherman.mayi.listeners.multi.RationaleMultiListener;
 import com.thanosfisherman.mayi.listeners.single.PermissionResultSingleListener;
@@ -18,10 +18,10 @@ import java.util.List;
 /**
  * Class to build the permission and initiating the request for permissions.
  */
-public class Mayi implements IPermissionBuilder,
-        IPermissionBuilder.Permission,
-        IPermissionBuilder.SinglePermissionBuilder,
-        IPermissionBuilder.MultiPermissionBuilder {
+public class Mayi implements PermissionBuilder,
+        PermissionBuilder.Permission,
+        PermissionBuilder.SinglePermissionBuilder,
+        PermissionBuilder.MultiPermissionBuilder {
     private final WeakReference<AbilitySlice> mActivity;
     private String[] mPermissions;
     @Nullable
@@ -43,7 +43,7 @@ public class Mayi implements IPermissionBuilder,
         this.mActivity = new WeakReference<>(activity);
     }
 
-    public static IPermissionBuilder.Permission withActivity(AbilitySlice activity) {
+    public static PermissionBuilder.Permission withActivity(AbilitySlice activity) {
         return new Mayi(activity);
     }
 
@@ -96,7 +96,7 @@ public class Mayi implements IPermissionBuilder,
     }
 
     @Override
-    public IPermissionBuilder onErrorListener(MayiErrorListener errorListener) {
+    public PermissionBuilder onErrorListener(MayiErrorListener errorListener) {
         mErrorListener = errorListener;
         return this;
     }
@@ -119,7 +119,6 @@ public class Mayi implements IPermissionBuilder,
                 checkPermissionsUtil();
             }
         } catch (Exception e) {
-            e.printStackTrace();
             if (mErrorListener != null) {
                 mErrorListener.onError(e);
             }

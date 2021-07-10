@@ -32,7 +32,8 @@ import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PermissionManagerTest {
-
+    private static final String LOCATION_PERMISSION = "SystemPermission.LOCATION";
+    private static final String MICROPHONE_PERMISSION = "SystemPermission.MICROPHONE";
     @InjectMocks
     PermissionManager permissionManager;
     @Mock
@@ -48,7 +49,7 @@ public class PermissionManagerTest {
 
     @Test
     public void testGetBeanResults() {
-        String[] allPermissions = {"SystemPermission.LOCATION", "SystemPermission.MICROPHONE"};
+        String[] allPermissions = {LOCATION_PERMISSION, MICROPHONE_PERMISSION};
         int[] grantResults = {IBundleManager.PERMISSION_DENIED, IBundleManager.PERMISSION_GRANTED};
         final List<PermissionBean> beansResultList = new LinkedList<>();
         permissionManager.getBeanResults(beansResultList, allPermissions, grantResults);
@@ -58,22 +59,22 @@ public class PermissionManagerTest {
     @Test
     public void testRequestPermissionResult() {
         int requestCode = 1001;
-        String[] permissions = {"SystemPermission.LOCATION"};
+        String[] permissions = {LOCATION_PERMISSION};
         int[] grantResults = {IBundleManager.PERMISSION_DENIED};
-        List<String> deniedPermissions = new ArrayList<String>();
-        deniedPermissions.add("SystemPermission.LOCATION");
-        List<String> grantedPermissions = new ArrayList<String>();
-        grantedPermissions.add("SystemPermission.MICROPHONE");
+        List<String> deniedPermissions = new ArrayList<>();
+        deniedPermissions.add(LOCATION_PERMISSION);
+        List<String> grantedPermissions = new ArrayList<>();
+        grantedPermissions.add(MICROPHONE_PERMISSION);
         permissionManager.checkPermissions(deniedPermissions, grantedPermissions);
         permissionManager.setListeners(null, permissionResultMultiListener);
         permissionManager.requestPermissionsResult(requestCode, permissions, grantResults);
         PermissionBean pBean;
-        pBean = new PermissionBean("SystemPermission.MICROPHONE");
+        pBean = new PermissionBean(MICROPHONE_PERMISSION);
         pBean.setGranted(true);
         pBean.setPermanentlyDenied(false);
         List<PermissionBean> permissionBeans = new LinkedList<>();
         permissionBeans.add(0, pBean);
-        pBean = new PermissionBean("SystemPermission.LOCATION");
+        pBean = new PermissionBean(LOCATION_PERMISSION);
         pBean.setGranted(false);
         pBean.setPermanentlyDenied(true);
         permissionBeans.add(1, pBean);
@@ -83,10 +84,10 @@ public class PermissionManagerTest {
 
     @Test
     public void testRequestPermissions() {
-        List<String> deniedPermissions = new ArrayList<String>();
-        deniedPermissions.add("SystemPermission.LOCATION");
-        List<String> grantedPermissions = new ArrayList<String>();
-        grantedPermissions.add("SystemPermission.MICROPHONE");
+        List<String> deniedPermissions = new ArrayList<>();
+        deniedPermissions.add(LOCATION_PERMISSION);
+        List<String> grantedPermissions = new ArrayList<>();
+        grantedPermissions.add(MICROPHONE_PERMISSION);
         permissionManager.checkPermissions(deniedPermissions, grantedPermissions);
         permissionManager.requestPermissions();
         verify(slice).requestPermissionsFromUser(deniedPermissions.toArray(new

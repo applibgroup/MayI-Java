@@ -33,7 +33,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MayiTest {
-
+    private static final String LOCATION_PERMISSION = "SystemPermission.LOCATION";
+    private static final String MICROPHONE_PERMISSION = "SystemPermission.MICROPHONE";
     @InjectMocks
     Mayi mayi;
     @Mock
@@ -52,13 +53,13 @@ public class MayiTest {
     MayiErrorListener mErrorListener;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         mayi = (Mayi)Mayi.withActivity(slice);
     }
 
     @Test
     public void testWithPermission() {
-        Mayi mayi1 = (Mayi)mayi.withPermission("SystemPermission.Location");
+        Mayi mayi1 = (Mayi)mayi.withPermission(LOCATION_PERMISSION);
         Assert.assertNotNull(mayi1);
     }
 
@@ -70,15 +71,14 @@ public class MayiTest {
 
     @Test
     public void testWithPermissions() {
-        String permissions[] = {"SystemPermission.Location", "SystemPermission.Microphone"};
+        String[] permissions = {LOCATION_PERMISSION, MICROPHONE_PERMISSION};
         Mayi mayi1 = (Mayi)mayi.withPermissions(permissions);
         Assert.assertNotNull(mayi1);
     }
 
     @Test
     public void testWithPermissionsWithNull() {
-        String permissions[] = null;
-        Mayi mayi1 = (Mayi)mayi.withPermissions(permissions);
+        Mayi mayi1 = (Mayi)mayi.withPermissions(null);
         Assert.assertNotNull(mayi1);
     }
 
@@ -100,13 +100,11 @@ public class MayiTest {
         Assert.assertNotNull(mayi1);
     }
 
-
     @Test
     public void testOnRationaleMulti() {
         Mayi mayi1 = (Mayi)mayi.onRationale(rationale1);
         Assert.assertNotNull(mayi1);
     }
-
 
     @Test
     public void testOnErrorListener() {
@@ -129,7 +127,7 @@ public class MayiTest {
     public void testCheckWithNull() throws NullPointerException {
         try {
             mayi.onErrorListener(mErrorListener);
-            String permissions[] = {null, "SystemPermission.Location"};
+            String[] permissions = {null, LOCATION_PERMISSION};
             Mayi mayi1 = (Mayi)mayi.withPermissions(permissions);
             mayi1.check();
         } catch(Exception e) {
@@ -138,13 +136,11 @@ public class MayiTest {
     }
 
     @Test
-    public void testCheckWithNotNull() throws NullPointerException {
-        String permissions[] = {"SystemPermission.Microphone", "SystemPermission.Location"};
+    public void testCheckWithNotNull() {
+        String[] permissions = {MICROPHONE_PERMISSION, LOCATION_PERMISSION};
         Mayi mayi1 = (Mayi)mayi.withPermissions(permissions);
         Mayi mayi2 = (Mayi)mayi1.onResult(response1);
-        response=null;
-        Mayi mayi3 = (Mayi)mayi2.onResult(response);
-        mayi3.check();
+        mayi2.check();
         final PermissionBean[] beans = new PermissionBean[permissions.length];
         for (int i = 0; i < permissions.length; i++) {
             beans[i] = new PermissionBean(permissions[i]);

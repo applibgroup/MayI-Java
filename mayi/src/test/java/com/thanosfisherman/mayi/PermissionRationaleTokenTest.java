@@ -26,7 +26,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PermissionRationaleTokenTest {
-
     @InjectMocks
     PermissionRationaleToken pToken;
     @Mock

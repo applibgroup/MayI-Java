@@ -23,14 +23,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 public class PermissionBeanTest {
-
+    private static final String LOCATION_SYSTEM_PERMISSION = "ohos.permission.LOCATION";
     @InjectMocks
     PermissionBean pBean;
     @Mock
     Object o;
+
     @Before
     public void setUp() {
-        pBean = new PermissionBean("Yash.Permissions.LOCATION");
+        pBean = new PermissionBean(LOCATION_SYSTEM_PERMISSION);
     }
 
     @Test
@@ -41,15 +42,14 @@ public class PermissionBeanTest {
 
     @Test
     public void testEqualsTrue() {
-        PermissionBean pBean1 = new PermissionBean("Yash.Permissions.LOCATION");
+        PermissionBean pBean1 = new PermissionBean(LOCATION_SYSTEM_PERMISSION);
         boolean result = pBean.equals(pBean1);
         assertTrue(result);
     }
 
     @Test
     public void testHashCode(){
-        String name = "Yash.Permissions.LOCATION";
-        int result = name.hashCode();
+        int result = LOCATION_SYSTEM_PERMISSION.hashCode();
         result = 31 * result;
         assertEquals(result, pBean.hashCode());
     }
@@ -63,14 +63,12 @@ public class PermissionBeanTest {
 
     @Test
     public void testGetName() {
-        String name = "Yash.Permissions.LOCATION";
-        assertEquals(pBean.getName(), name);
+        assertEquals(LOCATION_SYSTEM_PERMISSION, pBean.getName());
     }
 
     @Test
     public void testGetSimpleNameTrue() {
-        String name = "Yash.Permissions.LOCATION";
-        String result = name.split("\\.")[2];
+        String result = LOCATION_SYSTEM_PERMISSION.split("\\.")[2];
         assertEquals(pBean.getSimpleName(), result);
     }
 
