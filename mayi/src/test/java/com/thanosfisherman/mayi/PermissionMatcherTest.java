@@ -25,7 +25,7 @@ import java.lang.ref.WeakReference;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PermissionMatcherTest {
-    String[] permissions = {"SystemPermission.LOCATION", "SystemPermission.MICROPHONE"};
+    private static final String[] PERMISSIONS = {"SystemPermission.LOCATION", "SystemPermission.MICROPHONE"};
     PermissionMatcher pMatcher;
     @Mock
     WeakReference<AbilitySlice> slice;
@@ -37,6 +37,6 @@ public class PermissionMatcherTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testMatcherWithNullSlice() {
-        pMatcher = new PermissionMatcher(permissions, null);
+        pMatcher = new PermissionMatcher(PERMISSIONS, null);
     }
 }

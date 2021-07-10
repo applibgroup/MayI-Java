@@ -30,6 +30,9 @@ import com.thanosfisherman.mayi.PermissionToken;
 import com.thanosfisherman.mayi.ResourceTable;
 import java.util.Arrays;
 
+/**
+ * Renders the UI-ability_main and initialises the views.
+ */
 public class MainAbilitySlice extends AbilitySlice {
     private Component toastComponent;
     private Text toastText;
