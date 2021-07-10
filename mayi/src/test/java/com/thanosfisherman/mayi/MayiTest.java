@@ -78,8 +78,7 @@ public class MayiTest {
 
     @Test
     public void testWithPermissionsWithNull() {
-        String[] permissions = null;
-        Mayi mayi1 = (Mayi)mayi.withPermissions(permissions);
+        Mayi mayi1 = (Mayi)mayi.withPermissions(null);
         Assert.assertNotNull(mayi1);
     }
 
@@ -117,8 +116,7 @@ public class MayiTest {
     public void testCheck() throws NullPointerException {
         try {
             mayi.onErrorListener(mErrorListener);
-            String[] permissions = null;
-            Mayi mayi1 = (Mayi)mayi.withPermissions(permissions);
+            Mayi mayi1 = (Mayi)mayi.withPermissions(null);
             mayi1.check();
         } catch(Exception e) {
             verify(mErrorListener).onError(e);
@@ -142,9 +140,7 @@ public class MayiTest {
         String[] permissions = {MICROPHONE_PERMISSION, LOCATION_PERMISSION};
         Mayi mayi1 = (Mayi)mayi.withPermissions(permissions);
         Mayi mayi2 = (Mayi)mayi1.onResult(response1);
-        response=null;
-        Mayi mayi3 = (Mayi)mayi2.onResult(response);
-        mayi3.check();
+        mayi2.check();
         final PermissionBean[] beans = new PermissionBean[permissions.length];
         for (int i = 0; i < permissions.length; i++) {
             beans[i] = new PermissionBean(permissions[i]);
