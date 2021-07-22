@@ -2,7 +2,8 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=applibgroup_MayI-Java&metric=alert_status)](https://sonarcloud.io/dashboard?id=applibgroup_MayI-Java)
 # MayI
 <img src="Logotype primary.png" width="40%" height="40%" />
-MayI is yet another library that simplifies the process of requesting permissions at runtime for Harmony devices.
+Welcome to the MayI library.
+MayI is yet another library that simplifies the process of requesting permissions at runtime for Harmony devices. 
 
 ## Screenshot
 ![Demo screenshot](mayi_screenshot.gif "gif demo")
