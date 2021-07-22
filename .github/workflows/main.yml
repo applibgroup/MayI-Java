@@ -4,9 +4,9 @@ name: Build
 
 on:
   push:
-    branches: [ temp ]
+    branches: [ master ]
   pull_request:
-    branches: [ temp ]
+    branches: [ master ]
 
 jobs:
   Hmos_Build:
