@@ -31,7 +31,14 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 ```
-​
+3. For using MayI from a remote repository in separate application, add the below dependencies in entry/build.gradle file.
+```java
+dependencies {
+    implementation 'dev.applibgroup:mayi:1.0.0'
+    testCompile 'junit:junit:4.12'
+}
+```
+
 ## Usage
 ### Add onRequestPermissionsFromUserResult in MainAbility
 To get the result of the permission requests, we need to have this overridden method in MainAbility:
